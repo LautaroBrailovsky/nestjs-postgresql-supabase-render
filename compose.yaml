@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: postgres-bootcamp-api
+    environment:
+      POSTGRES_USER: alumno
+      POSTGRES_PASSWORD: alumno_dev_123
+      POSTGRES_DB: bootcamp_api
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Carga el esquema la primera vez que se crea la base
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+
+volumes:
+  postgres_data:
