@@ -21,7 +21,7 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors({ origin: 'http://127.0.0.1:5500' });
+  app.enableCors({ origin: `http://127.0.0.1:${process.env.WEB_PORT}` });
 
   await app.listen(process.env.PORT ?? 3000);
 }
