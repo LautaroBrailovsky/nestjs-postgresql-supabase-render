@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libros</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 2rem;
+            color: #222;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 900px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+        }
+        th {
+            background: #f4f4f4;
+        }
+        tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+        td.num {
+            text-align: right;
+        }
+        #status {
+            margin-bottom: 1rem;
+            color: #666;
+        }
+        #status.error {
+            color: #c00;
+        }
+    </style>
+</head>
+<body>
+    <h1>Libros</h1>
+    <p id="status">Cargando...</p>
+
+    <table id="books-table" hidden>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Páginas</th>
+                <th>Creado</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const API_URL = 'https://nestjs-postgresql-supabase-render.onrender.com/api/books';
+
+        const status = document.getElementById('status');
+        const table = document.getElementById('books-table');
+        const tbody = table.querySelector('tbody');
+
+        async function loadBooks() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const books = await response.json();
+                renderBooks(books);
+            } catch (error) {
+                status.textContent = `Error al cargar los libros: ${error.message}`;
+                status.classList.add('error');
+            }
+        }
+
+        function renderBooks(books) {
+            tbody.innerHTML = '';
+
+            if (books.length === 0) {
+                status.textContent = 'No hay libros.';
+                return;
+            }
+
+            for (const book of books) {
+                const tr = document.createElement('tr');
+                const cells = [
+                    { value: book.id, className: 'num' },
+                    { value: book.title },
+                    { value: book.author },
+                    { value: book.pages, className: 'num' },
+                    { value: new Date(book.createdAt).toLocaleString('es-ES') },
+                ];
+                for (const cell of cells) {
+                    const td = document.createElement('td');
+                    td.textContent = cell.value;
+                    if (cell.className) td.className = cell.className;
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            }
+
+            status.textContent = `${books.length} libros`;
+            table.hidden = false;
+        }
+
+        loadBooks();
+    </script>
+</body>
+</html>
