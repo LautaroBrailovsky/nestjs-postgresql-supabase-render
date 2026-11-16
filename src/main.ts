@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -11,6 +11,12 @@ async function bootstrap() {
 
   // Todas las rutas empiezan por /api
   app.setGlobalPrefix('api');
+
+  // Versiones en la URL: /api/v1/..., /api/v2/...
+  app.enableVersioning({
+    type: VersioningType.URI, // la versión va en la URL
+    defaultVersion: '1', // la ruta que no diga nada es v1
+  });
 
   // Comprueba los DTO en todas las rutas
   app.useGlobalPipes(

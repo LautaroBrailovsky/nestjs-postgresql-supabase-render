@@ -1,5 +1,6 @@
 import {
   IsInt,
+  IsOptional,
   IsString,
   MaxLength,
   Min,
@@ -26,4 +27,9 @@ export class UpdateBookDto {
   @IsInt()
   @Min(1)
   pages?: number;
+
+  @IsOptional() // si no llega, el libro empieza con 0 ejemplares
+  @IsInt()
+  @Min(0)
+  stock?: number;
 }

@@ -8,10 +8,12 @@ import {
   Patch,
   Post,
   Query,
+  Version,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { ListBooksQueryDto } from './dto/list-books-query.dto';
 
 @Controller('books') // todas las rutas de esta clase empiezan por /api/books
 export class BooksController {
@@ -22,6 +24,13 @@ export class BooksController {
   findAll(@Query('author') author?: string) {
     return this.booksService.findAll(author);
   }
+
+  @Get()
+  @Version('2') // GET /api/v2/books → { data, total, page, limit, totalPages }
+  findPage(@Query() query: ListBooksQueryDto) {
+    return this.booksService.findPage(query);
+  }
+
 
   @Get(':id') // GET /api/books/1
   findOne(@Param('id', ParseIntPipe) id: number) {
